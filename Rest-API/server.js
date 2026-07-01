@@ -9,12 +9,12 @@ const notes = [];
 // PUT Method
 app.post("/notes", (req, res) => {
   console.log(req.body);
-
+  notes.push(req.body);
   res.send("Notes created");
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello");
+app.get("/notes", (req, res) => {
+  res.send(notes);
 });
 
 app.listen(3000, () => {
