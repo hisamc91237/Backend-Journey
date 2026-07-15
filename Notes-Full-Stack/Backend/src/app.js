@@ -40,4 +40,16 @@ app.delete("/api/notes/:id", async (req, res) => {
   });
 });
 
+// UPDATE /api/notes/:id
+app.patch("/api/notes/:id", async (req, res) => {
+  const id = req.params.id;
+  const { description } = req.body;
+
+  await noteModel.findByIdAndUpdate(id, { description });
+
+  res.status(200).json({
+    message: "note updated successfully",
+  });
+});
+
 module.exports = app;
