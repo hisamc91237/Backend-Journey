@@ -2,9 +2,11 @@ const express = require("express");
 const app = express();
 const noteModel = require("./models/note.model");
 const cors = require("cors");
+const path = require("path");
 
 app.use(express.json()); // Middleware
 app.use(cors()); // Middleware for cors
+app.use(express.static("./public")); // Middleware to allow public folder files api calls
 
 // POST /api/notes
 app.post("/api/notes", async (req, res) => {
@@ -53,6 +55,11 @@ app.patch("/api/notes/:id", async (req, res) => {
     message: "note updated successfully",
     note,
   });
+});
+
+// Middleware - * is wild card
+app.use("*", (req, res) => {
+  res.sendFile(path.join("__dirname", "..", "/public/index.html"));
 });
 
 module.exports = app;
