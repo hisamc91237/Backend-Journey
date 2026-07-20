@@ -2,6 +2,7 @@ const express = require("express");
 const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const authRouter = express.Router();
+const crypto = require("crypto");
 
 // POST /api/auth/register
 authRouter.post("/register", async (req, res) => {
@@ -15,10 +16,12 @@ authRouter.post("/register", async (req, res) => {
     });
   }
 
+  const hash = crypto.createHash("md5").update(password).digest("hex");
+
   const user = await userModel.create({
     email,
     name,
-    password,
+    password: hash,
   });
 
   const token = jwt.sign(
@@ -49,7 +52,9 @@ authRouter.post("/login", async (req, res) => {
     });
   }
 
-  const isPasswordMatched = isUserExist.password === password;
+  const isPasswordMatched =
+    isUserExist.password ===
+    crypto.createHash("md5").update(password).digest("hex");
 
   if (!isPasswordMatched) {
     return res.status(401).json({
