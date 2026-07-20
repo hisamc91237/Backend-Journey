@@ -37,4 +37,40 @@ authRouter.post("/register", async (req, res) => {
   });
 });
 
+// POST
+authRouter.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const isUserExist = await userModel.findOne({ email });
+
+  if (!isUserExist) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+
+  const isPasswordMatched = isUserExist.password === password;
+
+  if (!isPasswordMatched) {
+    return res.status(401).json({
+      message: "Password is invalid",
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      id: isUserExist._id,
+    },
+    process.env.JWT_SECRET,
+  );
+
+  res.cookie("jwt_token", token);
+
+  res.status(200).json({
+    message: "User logged in Successfully",
+    isUserExist,
+    token,
+  });
+});
+
 module.exports = authRouter;
